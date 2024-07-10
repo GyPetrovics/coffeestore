@@ -16,16 +16,16 @@ public class OrderItems {
     @JoinColumn(name = "order_id", nullable = false)
     private Orders orderId;
     @Column(name = "drink_id")
-    private Integer drinkId;
+    private Long drinkId;
     @Column(name = "topping_id")
     private Integer toppingId;
 
-    public OrderItems(Integer drinkId, Integer toppingId) {
+    public OrderItems(Long drinkId, Integer toppingId) {
         this.drinkId = drinkId;
         this.toppingId = toppingId;
     }
 
-    public void setDrinkId(Integer drinkId) {
+    public void setDrinkId(Long drinkId) {
         this.drinkId = drinkId;
     }
 
@@ -45,7 +45,7 @@ public class OrderItems {
         return orderId;
     }
 
-    public Integer getDrinkId() {
+    public Long getDrinkId() {
         return drinkId;
     }
 

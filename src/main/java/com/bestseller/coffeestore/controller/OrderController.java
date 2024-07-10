@@ -1,6 +1,7 @@
 package com.bestseller.coffeestore.controller;
 
 import com.bestseller.coffeestore.controller.bean.OrderCreation;
+import com.bestseller.coffeestore.dto.OrderDTO;
 import com.bestseller.coffeestore.model.Order;
 import com.bestseller.coffeestore.service.OrderService;
 import org.springframework.http.MediaType;
@@ -21,7 +22,7 @@ public class OrderController {
     }
 
     @PostMapping(path = "/createorder", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Order> createOrder(
+    public ResponseEntity<OrderDTO> createOrder(
             @RequestBody OrderCreation orderCreation
     ) {
 

@@ -28,6 +28,10 @@ public class Orders {
         return userId;
     }
 
+    public List<OrderItems> getOrderItemList() {
+        return orderItemList;
+    }
+
     public void setUser_Id(String userId) {
         this.userId = userId;
     }
