@@ -1,6 +1,5 @@
 package com.bestseller.coffeestore.dao;
 
-import com.bestseller.coffeestore.dao.bean.DrinkPrices;
 import com.bestseller.coffeestore.dto.DrinkDTO;
 import com.bestseller.coffeestore.entity.Drink;
 
@@ -13,5 +12,5 @@ public interface DrinksDAO {
     Drink findById(Long drinkId);
     List<DrinkDTO> getAllDrinks();
     void update(Drink drink);
-    List<DrinkPrices> getDrinkPrices(Set drinkIds);
+    List<DrinkDTO> getOrderedDrinks(Set drinkIds);
 }

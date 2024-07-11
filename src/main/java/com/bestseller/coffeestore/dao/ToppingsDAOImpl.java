@@ -1,12 +1,16 @@
 package com.bestseller.coffeestore.dao;
 
+import com.bestseller.coffeestore.dto.DrinkDTO;
 import com.bestseller.coffeestore.dto.ToppingDTO;
+import com.bestseller.coffeestore.entity.Drink;
 import com.bestseller.coffeestore.entity.Topping;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Repository
@@ -57,5 +61,23 @@ public class ToppingsDAOImpl implements ToppingsDAO{
     @Override
     public void update(Topping topping) {
         entityManager.merge(topping);
+    }
+
+    @Override
+    public List<ToppingDTO> getOrderedToppings(Set toppingIds) {
+        TypedQuery<Topping> orderedToppingsQuery = entityManager.createQuery("SELECT t FROM Topping t WHERE t.id IN :toppingIds", Topping.class);
+        orderedToppingsQuery.setParameter("toppingIds", toppingIds);
+
+        List<Topping> resultList = orderedToppingsQuery.getResultList();
+
+        List<ToppingDTO> orderedToppingsList = new ArrayList<>();
+
+        for (Topping topping : resultList) {
+            ToppingDTO currentTopping = new ToppingDTO(topping.getId(), topping.getName(), topping.getPrice());
+            orderedToppingsList.add(currentTopping);
+        }
+
+
+        return orderedToppingsList;
     }
 }
