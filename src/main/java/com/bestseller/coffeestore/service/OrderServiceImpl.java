@@ -85,26 +85,52 @@ public class OrderServiceImpl implements OrderService{
 
         Long numberOfDrinks = drinksMap.entrySet().stream().map(nrOfDrinks -> nrOfDrinks.getValue()).reduce(Long::sum).orElse(0L);
 
-        // Assigning the prices of the drinks to the ordered drinks
-        for (int i = 0; i < orderCreation.getOrderItems().size(); i++) {
-            for (int j = 0; j < orderedDrinks.size(); j++) {
-                if (orderCreation.getOrderItems().get(i).getDrinkDTO().getDrinkId().equals(orderedDrinks.get(j).getDrinkId())) {
-                    orderCreation.getOrderItems().get(i).getDrinkDTO().setDrinkName(orderedDrinks.get(j).getDrinkName());
-                    orderCreation.getOrderItems().get(i).getDrinkDTO().setPrice(orderedDrinks.get(j).getPrice());
-                }
-            }
-        }
+        // Assigning the prices of the ordered drinks
+//        for (int i = 0; i < orderCreation.getOrderItems().size(); i++) {
+//            for (int j = 0; j < orderedDrinks.size(); j++) {
+//                if (orderCreation.getOrderItems().get(i).getDrinkDTO().getDrinkId().equals(orderedDrinks.get(j).getDrinkId())) {
+//                    orderCreation.getOrderItems().get(i).getDrinkDTO().setDrinkName(orderedDrinks.get(j).getDrinkName());
+//                    orderCreation.getOrderItems().get(i).getDrinkDTO().setPrice(orderedDrinks.get(j).getPrice());
+//                }
+//            }
+//        }
 
-        for (int i = 0; i < orderCreation.getOrderItems().size(); i++) {
-            for (int j = 0; j < orderCreation.getOrderItems().get(i).getToppingDTOList().size(); j++) {
-                for (int k = 0; k < orderedToppings.size(); k++) {
-                    if (orderCreation.getOrderItems().get(i).getToppingDTOList().get(j).getToppingId().equals(orderedToppings.get(k).getToppingId())) {
-                        orderCreation.getOrderItems().get(i).getToppingDTOList().get(j).setToppingName(orderedToppings.get(k).getToppingName());
-                        orderCreation.getOrderItems().get(i).getToppingDTOList().get(j).setPrice(orderedToppings.get(k).getPrice());
-                    }
-                }
-            }
-        }
+        // Assigning the prices of the ordered drinks
+        orderCreation.getOrderItems().forEach(orderItem -> {
+            orderedDrinks.stream()
+                    .filter(drink -> drink.getDrinkId().equals(orderItem.getDrinkDTO().getDrinkId()))
+                    .findFirst()
+                    .ifPresent(drink -> {
+                        orderItem.getDrinkDTO().setDrinkName(drink.getDrinkName());
+                        orderItem.getDrinkDTO().setPrice(drink.getPrice());
+                    });
+        });
+
+
+        // Assigning the prices of the ordered toppings
+//        for (int i = 0; i < orderCreation.getOrderItems().size(); i++) {
+//            for (int j = 0; j < orderCreation.getOrderItems().get(i).getToppingDTOList().size(); j++) {
+//                for (int k = 0; k < orderedToppings.size(); k++) {
+//                    if (orderCreation.getOrderItems().get(i).getToppingDTOList().get(j).getToppingId().equals(orderedToppings.get(k).getToppingId())) {
+//                        orderCreation.getOrderItems().get(i).getToppingDTOList().get(j).setToppingName(orderedToppings.get(k).getToppingName());
+//                        orderCreation.getOrderItems().get(i).getToppingDTOList().get(j).setPrice(orderedToppings.get(k).getPrice());
+//                    }
+//                }
+//            }
+//        }
+
+        // Assigning the prices of the ordered toppings
+        orderCreation.getOrderItems().forEach(orderItem -> {
+            orderItem.getToppingDTOList().forEach(topping -> {
+                orderedToppings.stream()
+                        .filter(orderedTopping -> orderedTopping.getToppingId().equals(topping.getToppingId()))
+                        .findFirst()
+                        .ifPresent(orderedTopping -> {
+                            topping.setToppingName(orderedTopping.getToppingName());
+                            topping.setPrice(orderedTopping.getPrice());
+                        });
+            });
+        });
 
 
         return null;
