@@ -1,12 +1,15 @@
 package com.bestseller.coffeestore.dao;
 
+import com.bestseller.coffeestore.dao.bean.DrinkPrices;
 import com.bestseller.coffeestore.dto.DrinkDTO;
 import com.bestseller.coffeestore.entity.Drink;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Repository
@@ -58,5 +61,24 @@ public class DrinksDAOImpl implements DrinksDAO{
     @Override
     public void update(Drink drink) {
         entityManager.merge(drink);
+    }
+
+    @Override
+    public List<DrinkPrices> getDrinkPrices(Set drinkIds) {
+
+        TypedQuery<Drink> drinkPricesQuery = entityManager.createQuery("SELECT d FROM Drink d WHERE d.id IN :drinkIds", Drink.class);
+        drinkPricesQuery.setParameter("drinkIds", drinkIds);
+
+        List<Drink> resultList = drinkPricesQuery.getResultList();
+
+        List<DrinkPrices> drinkPricesList = new ArrayList<>();
+
+        for (Drink drink : resultList) {
+            DrinkPrices drinkPrices = new DrinkPrices(drink.getId(), drink.getName(), drink.getPrice());
+            drinkPricesList.add(drinkPrices);
+        }
+
+
+        return drinkPricesList;
     }
 }

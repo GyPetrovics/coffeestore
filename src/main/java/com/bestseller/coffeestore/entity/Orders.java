@@ -1,6 +1,5 @@
 package com.bestseller.coffeestore.entity;
 
-import com.bestseller.coffeestore.dto.OrderItemDTO;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 

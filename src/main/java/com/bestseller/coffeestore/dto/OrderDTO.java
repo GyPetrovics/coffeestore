@@ -1,6 +1,5 @@
 package com.bestseller.coffeestore.dto;
 
-import com.bestseller.coffeestore.entity.OrderItems;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
