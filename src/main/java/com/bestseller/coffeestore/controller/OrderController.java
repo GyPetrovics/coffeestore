@@ -2,7 +2,6 @@ package com.bestseller.coffeestore.controller;
 
 import com.bestseller.coffeestore.controller.bean.OrderCreation;
 import com.bestseller.coffeestore.dto.OrderDTO;
-import com.bestseller.coffeestore.model.Order;
 import com.bestseller.coffeestore.service.OrderService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +24,9 @@ public class OrderController {
     public ResponseEntity<OrderDTO> createOrder(
             @RequestBody OrderCreation orderCreation
     ) {
-
         if (orderCreation == null) {
             // throw Exception (a custom exception could be created here...)
         }
-
-
         return ResponseEntity.ok(orderService.createOrder(orderCreation));
     }
 
