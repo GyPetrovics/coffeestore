@@ -10,6 +10,7 @@ import com.bestseller.coffeestore.dto.OrderItemDTO;
 import com.bestseller.coffeestore.dto.ToppingDTO;
 import com.bestseller.coffeestore.entity.OrderItems;
 import com.bestseller.coffeestore.entity.Orders;
+import com.bestseller.coffeestore.model.OrderSummary;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,9 +34,9 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     @Transactional
-    public OrderDTO createOrder(@NonNull OrderCreation orderCreation) {
+    public OrderSummary createOrder(@NonNull OrderCreation orderCreation) {
 
-        Double totalPrice = calculateOrderTotalPrice(orderCreation);
+        Double finalOrderPrice = calculateOrderTotalPrice(orderCreation);
 
         // Transforming and preparing incoming order data into entity records and saving them in the DB.
         Orders order = new Orders();
@@ -55,14 +56,18 @@ public class OrderServiceImpl implements OrderService{
 
 //      Creating response body ---------------------------------------------------
 
-        OrderDTO orderDTO = new OrderDTO();
-        orderDTO.setId(order.getId());
-        orderDTO.setUserId(order.getUserId());
+//        OrderDTO orderDTO = new OrderDTO();
+//        orderDTO.setId(order.getId());
+//        orderDTO.setUserId(order.getUserId());
+//        orderDTO.setOrderItemList(orderCreation.getOrderItems());
 
-        // need to fix the return values for orderitems!!!
-        orderDTO.setOrderItemList(orderCreation.getOrderItems());
+        OrderSummary orderSummary = new OrderSummary();
+        orderSummary.setId(order.getId());
+        orderSummary.setUserId(order.getUserId());
+        orderSummary.setOrderItemList(orderCreation.getOrderItems());
+        orderSummary.setFinalOrderPrice(finalOrderPrice);
 
-        return orderDTO;
+        return orderSummary;
     }
 
     private Double calculateOrderTotalPrice(OrderCreation orderCreation) {
@@ -151,7 +156,6 @@ public class OrderServiceImpl implements OrderService{
         } else {
             finalPrice = fullPrice;
         }
-
 
         return finalPrice;
     }
