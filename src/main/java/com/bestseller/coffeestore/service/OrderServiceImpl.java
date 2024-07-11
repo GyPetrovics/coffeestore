@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class OrderServiceImpl implements OrderService{
@@ -34,7 +35,7 @@ public class OrderServiceImpl implements OrderService{
     @Transactional
     public OrderDTO createOrder(@NonNull OrderCreation orderCreation) {
 
-        Integer totalPrice = calculateOrderTotalPrice(orderCreation);
+        Double totalPrice = calculateOrderTotalPrice(orderCreation);
 
         // Transforming and preparing incoming order data into entity records and saving them in the DB.
         Orders order = new Orders();
@@ -64,7 +65,7 @@ public class OrderServiceImpl implements OrderService{
         return orderDTO;
     }
 
-    private Integer calculateOrderTotalPrice(OrderCreation orderCreation) {
+    private Double calculateOrderTotalPrice(OrderCreation orderCreation) {
         // Maps for counting the drinks and toppings by their iDs
         Map<Long, Long> drinksMap = orderCreation.getOrderItems().stream()
                 .collect(Collectors.groupingBy(drink -> drink.getDrinkDTO().getDrinkId(), Collectors.counting()));
@@ -133,6 +134,47 @@ public class OrderServiceImpl implements OrderService{
         });
 
 
-        return null;
+        int fullPrice = orderCreation.getOrderItems().stream()
+                .mapToInt(orderItem -> {
+                    int drinkPrice = orderItem.getDrinkDTO().getPrice();
+                    int toppingsPrice = orderItem.getToppingDTOList().stream()
+                            .mapToInt(topping -> topping.getPrice())
+                            .sum();
+                    int totalPrice = drinkPrice + toppingsPrice;
+                    return totalPrice;
+                })
+                .sum();
+
+        Map<Integer, Integer> pricesByOrderitem = IntStream.range(0, orderCreation.getOrderItems().size())
+                .boxed()
+                .collect(Collectors.toMap(
+                        i -> i,
+                        actualOrderPrice -> {
+                            OrderItemDTO orderItem = orderCreation.getOrderItems().get(actualOrderPrice);
+                            int drinkPrice = orderItem.getDrinkDTO().getPrice();
+                            int toppingsPrice = orderItem.getToppingDTOList().stream()
+                                    .mapToInt(ToppingDTO::getPrice)
+                                    .sum();
+                            return drinkPrice + toppingsPrice;
+                        }
+                ));
+
+        double finalPrice = 0.0;
+        if (fullPrice > 12 && pricesByOrderitem.size() >= 3) {
+            Map.Entry<Integer, Integer> integerIntegerEntry = pricesByOrderitem.entrySet().stream().min(Map.Entry.comparingByValue()).orElse(null);
+            Integer value = integerIntegerEntry.getValue();
+            finalPrice = fullPrice - value;
+        } else if (fullPrice > 12) {
+            finalPrice = fullPrice * 0.75;
+        } else if (pricesByOrderitem.size() >= 3) {
+            Map.Entry<Integer, Integer> integerIntegerEntry = pricesByOrderitem.entrySet().stream().min(Map.Entry.comparingByValue()).orElse(null);
+            Integer value = integerIntegerEntry.getValue();
+            finalPrice = fullPrice - value;
+        } else {
+            finalPrice = fullPrice;
+        }
+
+
+        return finalPrice;
     }
 }
