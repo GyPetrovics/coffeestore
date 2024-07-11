@@ -18,9 +18,9 @@ public class OrderItems {
     @Column(name = "drink_id")
     private Long drinkId;
     @Column(name = "topping_id")
-    private Integer toppingId;
+    private Long toppingId;
 
-    public OrderItems(Long drinkId, Integer toppingId) {
+    public OrderItems(Long drinkId, Long toppingId) {
         this.drinkId = drinkId;
         this.toppingId = toppingId;
     }
@@ -29,7 +29,7 @@ public class OrderItems {
         this.drinkId = drinkId;
     }
 
-    public void setToppingId(Integer toppingId) {
+    public void setToppingId(Long toppingId) {
         this.toppingId = toppingId;
     }
 
@@ -49,7 +49,7 @@ public class OrderItems {
         return drinkId;
     }
 
-    public Integer getToppingId() {
+    public Long getToppingId() {
         return toppingId;
     }
 

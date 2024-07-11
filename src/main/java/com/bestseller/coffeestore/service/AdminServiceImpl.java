@@ -1,9 +1,13 @@
 package com.bestseller.coffeestore.service;
 
 import com.bestseller.coffeestore.controller.bean.DrinkCreation;
+import com.bestseller.coffeestore.controller.bean.ToppingCreation;
 import com.bestseller.coffeestore.dao.DrinksDAO;
+import com.bestseller.coffeestore.dao.ToppingsDAO;
 import com.bestseller.coffeestore.dto.DrinkDTO;
+import com.bestseller.coffeestore.dto.ToppingDTO;
 import com.bestseller.coffeestore.entity.Drink;
+import com.bestseller.coffeestore.entity.Topping;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.NonNull;
@@ -15,10 +19,14 @@ import java.util.Optional;
 public class AdminServiceImpl implements AdminService{
 
     DrinksDAO drinksDAO;
+    ToppingsDAO toppingsDAO;
 
-    public AdminServiceImpl(DrinksDAO drinksDAO) {
+    public AdminServiceImpl(DrinksDAO drinksDAO, ToppingsDAO toppingsDAO) {
         this.drinksDAO = drinksDAO;
+        this.toppingsDAO = toppingsDAO;
     }
+
+//    CRUD service methods for Drinks -------------------------------------------------------------------------
 
     @Override
     @Transactional
@@ -65,6 +73,59 @@ public class AdminServiceImpl implements AdminService{
             existingDrink.setName(drinkCreation.getName());
             existingDrink.setPrice(drinkCreation.getPrice());
             drinksDAO.update(existingDrink);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+//    CRUD service methods for Toppings -------------------------------------------------------------------------
+
+    @Override
+    @Transactional
+    public ToppingDTO createTopping(@NonNull ToppingCreation toppingCreation) {
+
+        Topping topping = new Topping();
+        topping.setName(toppingCreation.getName());
+        topping.setPrice(toppingCreation.getPrice());
+
+        toppingsDAO.save(topping);
+
+        ToppingDTO toppingDTO = new ToppingDTO(topping.getId(), topping.getName(), topping.getPrice());
+
+        return toppingDTO;
+    }
+
+    @Override
+    @Transactional
+    public Boolean deleteTopping(@NonNull Long toppingId) {
+
+        Optional<Topping> toppingOptional = Optional.ofNullable(toppingsDAO.findById(toppingId));
+
+        if (toppingOptional.isPresent()) {
+            toppingsDAO.delete(toppingOptional.get());
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    @Override
+    public List<ToppingDTO> getAllToppings() {
+        return toppingsDAO.getAllToppings();
+    }
+
+    @Override
+    @Transactional
+    public Boolean updateTopping(@NonNull Long toppingId, @NonNull ToppingCreation toppingCreation) {
+        Optional<Topping> toppingOptional = Optional.ofNullable(toppingsDAO.findById(toppingId));
+
+        if (toppingOptional.isPresent()) {
+            Topping existingTopping = toppingOptional.get();
+            existingTopping.setName(toppingCreation.getName());
+            existingTopping.setPrice(toppingCreation.getPrice());
+            toppingsDAO.update(existingTopping);
             return true;
         } else {
             return false;
