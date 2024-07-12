@@ -10,6 +10,7 @@ import com.bestseller.coffeestore.dto.MostUsedToppingDTO;
 import com.bestseller.coffeestore.dto.ToppingDTO;
 import com.bestseller.coffeestore.entity.Drink;
 import com.bestseller.coffeestore.entity.Topping;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.NonNull;
@@ -17,6 +18,7 @@ import lombok.NonNull;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class AdminServiceImpl implements AdminService{
 
@@ -44,6 +46,7 @@ public class AdminServiceImpl implements AdminService{
 
         DrinkDTO drinkDTO = new DrinkDTO(drink.getId(), drink.getName(), drink.getPrice());
 
+        log.info("New drink has been added...");
         return drinkDTO;
     }
 
@@ -55,6 +58,7 @@ public class AdminServiceImpl implements AdminService{
 
         if (drinkOptional.isPresent()) {
             drinksDAO.delete(drinkOptional.get());
+            log.info("Drink with id: " + drinkId + " has been deleted from the database...");
             return true;
         } else {
             return false;
@@ -64,6 +68,7 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public List<DrinkDTO> getAllDrinks() {
+        log.info("List of all drinks have been retrieved...");
         return drinksDAO.getAllDrinks();
     }
 
@@ -77,6 +82,7 @@ public class AdminServiceImpl implements AdminService{
             existingDrink.setName(drinkCreation.getName());
             existingDrink.setPrice(drinkCreation.getPrice());
             drinksDAO.update(existingDrink);
+            log.info("Drink with id: " + drinkId + " has been updated...");
             return true;
         } else {
             return false;
@@ -97,6 +103,7 @@ public class AdminServiceImpl implements AdminService{
 
         ToppingDTO toppingDTO = new ToppingDTO(topping.getId(), topping.getName(), topping.getPrice());
 
+        log.info("A new topping has been added...");
         return toppingDTO;
     }
 
@@ -108,6 +115,7 @@ public class AdminServiceImpl implements AdminService{
 
         if (toppingOptional.isPresent()) {
             toppingsDAO.delete(toppingOptional.get());
+            log.info("The topping with id: " + " has been deleted from the database...");
             return true;
         } else {
             return false;
@@ -117,6 +125,7 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public List<ToppingDTO> getAllToppings() {
+        log.info("List of all toppings have been retrieved...");
         return toppingsDAO.getAllToppings();
     }
 
@@ -130,6 +139,7 @@ public class AdminServiceImpl implements AdminService{
             existingTopping.setName(toppingCreation.getName());
             existingTopping.setPrice(toppingCreation.getPrice());
             toppingsDAO.update(existingTopping);
+            log.info("The topping with id: " + toppingId + " has been updated in the database...");
             return true;
         } else {
             return false;
@@ -138,6 +148,7 @@ public class AdminServiceImpl implements AdminService{
 
     @Override
     public List<MostUsedToppingDTO> getMostUsedToppings() {
+        log.info("The list of the most used toppings has been retrieved...");
         return ordersDAO.getMostUsedToppings();
     }
 }

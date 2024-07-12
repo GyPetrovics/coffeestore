@@ -11,6 +11,7 @@ import com.bestseller.coffeestore.entity.OrderItems;
 import com.bestseller.coffeestore.entity.Orders;
 import com.bestseller.coffeestore.model.OrderSummary;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@Slf4j
 @Service
 public class OrderServiceImpl implements OrderService{
 
@@ -61,6 +63,7 @@ public class OrderServiceImpl implements OrderService{
         orderSummary.setOriginalPrice(origAndFinalOrderPrice.get("OrigPrice"));
         orderSummary.setFinalOrderPrice(origAndFinalOrderPrice.get("FinalPrice"));
 
+        log.info("A new order has been created...");
         return orderSummary;
     }
 
@@ -160,6 +163,7 @@ public class OrderServiceImpl implements OrderService{
         origAndFinalPriceMap.put("OrigPrice", Double.valueOf(fullPrice));
         origAndFinalPriceMap.put("FinalPrice", finalPrice);
 
+        log.info("Final order price has been calculated... ");
         return origAndFinalPriceMap;
     }
 }
