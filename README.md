@@ -14,7 +14,7 @@ JDBC URL: jdbc:h2:mem:coffestoredb
 
 ******************************************************************
 
-Server port is 8080 by default
+Server port is 8080
 
 # Coffee Store Backend API endpoint list and example Requestbodies
 ******************************************************************
@@ -22,28 +22,41 @@ Server port is 8080 by default
 /POST localhost:8080/order/createorder
 --------------------------------------
 {
-"userId": "user10",
+"userId": "user1",
 "orderItems": [
 {
 "drinkDTO": {
-"drinkId": 5
+"drinkId": 3
 },
 "toppingDTOList": [
 {
 "toppingId": 1
 },
 {
-"toppingId": 4
+"toppingId": 3
 }
 ]
 },
 {
 "drinkDTO": {
-"drinkId": 6
+"drinkId": 1
 },
 "toppingDTOList": [
 {
-"toppingId": 3
+"toppingId": 1
+},
+{
+"toppingId": 2
+}
+]
+},
+{
+"drinkDTO": {
+"drinkId": 4
+},
+"toppingDTOList": [
+{
+"toppingId": 4
 }
 ]
 }
