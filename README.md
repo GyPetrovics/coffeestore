@@ -78,12 +78,13 @@ Server port is 8080
 
 /DELETE localhost:8080/admin/deletedrink/{drinkId}
 --------------------------------------------------
-/DELETE localhost:8080/admin/deletedrink/{2}
+/DELETE localhost:8080/admin/deletedrink/2
 ***
 
 /PUT localhost:8080/admin/updateDrink/{drinId}
 ----------------------------------------------
 /PUT localhost:8080/admin/updateDrink/3
+
 {
 "name": "LatteNew",
 "price": 20
