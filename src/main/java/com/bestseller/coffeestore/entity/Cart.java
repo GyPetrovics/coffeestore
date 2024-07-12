@@ -6,18 +6,17 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "cart")
 @NoArgsConstructor
-public class Orders {
-
+public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     @Column(name = "user_id")
     private String userId;
-    @OneToMany(mappedBy = "orderId", cascade = CascadeType.ALL)
-    private List<OrderItems> orderItemList;
+    @OneToMany(mappedBy = "cartOrderId", cascade = CascadeType.ALL)
+    private List<CartOrderItems> cartOrderItemList;
 
     public Long getId() {
         return id;
@@ -27,23 +26,23 @@ public class Orders {
         return userId;
     }
 
-    public List<OrderItems> getOrderItemList() {
-        return orderItemList;
+    public List<CartOrderItems> getCartOrderItemList() {
+        return cartOrderItemList;
     }
 
-    public void setUser_Id(String userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public void setOrderItemList(List<OrderItems> orderItemList) {
-        this.orderItemList = orderItemList;
+    public void setCartOrderItemList(List<CartOrderItems> cartOrderItemList) {
+        this.cartOrderItemList = cartOrderItemList;
     }
 
     @Override
     public String toString() {
-        return "Orders{" +
+        return "Cart{" +
                 "id=" + id +
-                ", userId=" + userId +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 }

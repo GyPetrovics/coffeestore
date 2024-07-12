@@ -1,9 +1,7 @@
 package com.bestseller.coffeestore.dao;
 
 import com.bestseller.coffeestore.dto.MostUsedToppingDTO;
-import com.bestseller.coffeestore.dto.ToppingDTO;
 import com.bestseller.coffeestore.entity.Orders;
-import com.bestseller.coffeestore.entity.Topping;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
