@@ -83,6 +83,7 @@ public class OrderServiceImpl implements OrderService{
         List<DrinkDTO> orderedDrinks = drinksDAO.getOrderedDrinks(drinkIdSet);
         List<ToppingDTO> orderedToppings = toppingsDAO.getOrderedToppings(toppingIdSet);
 
+        // Counting the number of the drinks for discount calculation
         Long numberOfDrinks = drinksMap.entrySet().stream().map(nrOfDrinks -> nrOfDrinks.getValue()).reduce(Long::sum).orElse(0L);
 
         // Assigning the prices of the ordered drinks
@@ -111,6 +112,7 @@ public class OrderServiceImpl implements OrderService{
         });
 
 
+        // Calculationg order full price
         int fullPrice = orderCreation.getOrderItems().stream()
                 .mapToInt(orderItem -> {
                     int drinkPrice = orderItem.getDrinkDTO().getPrice();
@@ -122,6 +124,7 @@ public class OrderServiceImpl implements OrderService{
                 })
                 .sum();
 
+        // Collecting prices by Order items for discount calculation
         Map<Integer, Integer> pricesByOrderitem = IntStream.range(0, orderCreation.getOrderItems().size())
                 .boxed()
                 .collect(Collectors.toMap(
@@ -136,6 +139,7 @@ public class OrderServiceImpl implements OrderService{
                         }
                 ));
 
+        // Calculation final price considering promotions
         double finalPrice = 0.0;
         if (fullPrice > 12 && pricesByOrderitem.size() >= 3) {
             Map.Entry<Integer, Integer> integerIntegerEntry = pricesByOrderitem.entrySet().stream().min(Map.Entry.comparingByValue()).orElse(null);
@@ -151,6 +155,7 @@ public class OrderServiceImpl implements OrderService{
             finalPrice = fullPrice;
         }
 
+        // returning original full price and discounted price
         Map<String, Double> origAndFinalPriceMap = new HashMap<>();
         origAndFinalPriceMap.put("OrigPrice", Double.valueOf(fullPrice));
         origAndFinalPriceMap.put("FinalPrice", finalPrice);
