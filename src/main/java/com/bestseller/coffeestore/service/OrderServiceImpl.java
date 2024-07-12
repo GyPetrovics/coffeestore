@@ -35,7 +35,7 @@ public class OrderServiceImpl implements OrderService{
     @Transactional
     public OrderSummary createOrder(@NonNull OrderCreation orderCreation) {
 
-        Double finalOrderPrice = calculateOrderTotalPrice(orderCreation);
+        Map<String, Double> origAndFinalOrderPrice = calculateOrderTotalPrice(orderCreation);
 
         // Transforming and preparing incoming order data into entity records and saving them in the DB.
         Orders order = new Orders();
@@ -54,22 +54,17 @@ public class OrderServiceImpl implements OrderService{
         ordersDAO.save(order);
 
 //      Creating response body ---------------------------------------------------
-
-//        OrderDTO orderDTO = new OrderDTO();
-//        orderDTO.setId(order.getId());
-//        orderDTO.setUserId(order.getUserId());
-//        orderDTO.setOrderItemList(orderCreation.getOrderItems());
-
         OrderSummary orderSummary = new OrderSummary();
         orderSummary.setId(order.getId());
         orderSummary.setUserId(order.getUserId());
         orderSummary.setOrderItemList(orderCreation.getOrderItems());
-        orderSummary.setFinalOrderPrice(finalOrderPrice);
+        orderSummary.setOriginalPrice(origAndFinalOrderPrice.get("OrigPrice"));
+        orderSummary.setFinalOrderPrice(origAndFinalOrderPrice.get("FinalPrice"));
 
         return orderSummary;
     }
 
-    private Double calculateOrderTotalPrice(OrderCreation orderCreation) {
+    private Map<String, Double> calculateOrderTotalPrice(OrderCreation orderCreation) {
         // Maps for counting the drinks and toppings by their iDs
         Map<Long, Long> drinksMap = orderCreation.getOrderItems().stream()
                 .collect(Collectors.groupingBy(drink -> drink.getDrinkDTO().getDrinkId(), Collectors.counting()));
@@ -156,6 +151,10 @@ public class OrderServiceImpl implements OrderService{
             finalPrice = fullPrice;
         }
 
-        return finalPrice;
+        Map<String, Double> origAndFinalPriceMap = new HashMap<>();
+        origAndFinalPriceMap.put("OrigPrice", Double.valueOf(fullPrice));
+        origAndFinalPriceMap.put("FinalPrice", finalPrice);
+
+        return origAndFinalPriceMap;
     }
 }

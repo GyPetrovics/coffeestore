@@ -16,5 +16,6 @@ public class OrderSummary {
     private Long id;
     private String userId;
     private List<OrderItemDTO> orderItemList;
+    private Double originalPrice;
     private Double finalOrderPrice;
 }
