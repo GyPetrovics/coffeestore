@@ -3,8 +3,10 @@ package com.bestseller.coffeestore.service;
 import com.bestseller.coffeestore.controller.bean.DrinkCreation;
 import com.bestseller.coffeestore.controller.bean.ToppingCreation;
 import com.bestseller.coffeestore.dao.DrinksDAO;
+import com.bestseller.coffeestore.dao.OrdersDAO;
 import com.bestseller.coffeestore.dao.ToppingsDAO;
 import com.bestseller.coffeestore.dto.DrinkDTO;
+import com.bestseller.coffeestore.dto.MostUsedToppingDTO;
 import com.bestseller.coffeestore.dto.ToppingDTO;
 import com.bestseller.coffeestore.entity.Drink;
 import com.bestseller.coffeestore.entity.Topping;
@@ -20,10 +22,12 @@ public class AdminServiceImpl implements AdminService{
 
     DrinksDAO drinksDAO;
     ToppingsDAO toppingsDAO;
+    OrdersDAO ordersDAO;
 
-    public AdminServiceImpl(DrinksDAO drinksDAO, ToppingsDAO toppingsDAO) {
+    public AdminServiceImpl(DrinksDAO drinksDAO, ToppingsDAO toppingsDAO, OrdersDAO ordersDAO) {
         this.drinksDAO = drinksDAO;
         this.toppingsDAO = toppingsDAO;
+        this.ordersDAO = ordersDAO;
     }
 
 //    CRUD service methods for Drinks -------------------------------------------------------------------------
@@ -130,5 +134,10 @@ public class AdminServiceImpl implements AdminService{
         } else {
             return false;
         }
+    }
+
+    @Override
+    public List<MostUsedToppingDTO> getMostUsedToppings() {
+        return ordersDAO.getMostUsedToppings();
     }
 }

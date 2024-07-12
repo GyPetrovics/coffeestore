@@ -1,8 +1,6 @@
 package com.bestseller.coffeestore.dao;
 
-import com.bestseller.coffeestore.dto.DrinkDTO;
 import com.bestseller.coffeestore.dto.ToppingDTO;
-import com.bestseller.coffeestore.entity.Drink;
 import com.bestseller.coffeestore.entity.Topping;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;

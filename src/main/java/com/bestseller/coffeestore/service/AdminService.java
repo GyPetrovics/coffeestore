@@ -3,6 +3,7 @@ package com.bestseller.coffeestore.service;
 import com.bestseller.coffeestore.controller.bean.DrinkCreation;
 import com.bestseller.coffeestore.controller.bean.ToppingCreation;
 import com.bestseller.coffeestore.dto.DrinkDTO;
+import com.bestseller.coffeestore.dto.MostUsedToppingDTO;
 import com.bestseller.coffeestore.dto.ToppingDTO;
 import lombok.NonNull;
 
@@ -19,5 +20,6 @@ public interface AdminService {
     Boolean deleteTopping(@NonNull Long toppingId);
     List<ToppingDTO> getAllToppings();
     Boolean updateTopping(@NonNull Long toppingId, @NonNull ToppingCreation toppingCreation);
+    List<MostUsedToppingDTO> getMostUsedToppings();
 
 }

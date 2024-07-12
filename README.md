@@ -3,8 +3,8 @@ Coffee Store Backend API
 
 Spring Boot version: v3.3.1
 
-# Coffee Store Backend API endpoint list and example Requestbodies:
-*****************************************************************
+# Coffee Store Backend API endpoint list and example Requestbodies
+****************************************************************
 
 /POST localhost:8080/order/createorder
 --------------------------------------
@@ -88,5 +88,9 @@ Spring Boot version: v3.3.1
 "name": "Hazelnut syrupNEW",
 "price": 20
 }
+
+
+/GET localhost:8080/admin/mostUsedToppings
+------------------------------------------
 
 ****************************************************************

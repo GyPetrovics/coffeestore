@@ -3,6 +3,7 @@ package com.bestseller.coffeestore.controller;
 import com.bestseller.coffeestore.controller.bean.DrinkCreation;
 import com.bestseller.coffeestore.controller.bean.ToppingCreation;
 import com.bestseller.coffeestore.dto.DrinkDTO;
+import com.bestseller.coffeestore.dto.MostUsedToppingDTO;
 import com.bestseller.coffeestore.dto.ToppingDTO;
 import com.bestseller.coffeestore.service.AdminService;
 import org.springframework.http.HttpStatus;
@@ -130,6 +131,11 @@ public class AdminController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+    }
+
+    @GetMapping("/mostUsedToppings")
+    public ResponseEntity<List<MostUsedToppingDTO>> getMostUsedToppings() {
+        return ResponseEntity.ok(adminService.getMostUsedToppings());
     }
 
 }
