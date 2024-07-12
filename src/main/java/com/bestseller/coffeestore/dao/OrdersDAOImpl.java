@@ -27,7 +27,9 @@ public class OrdersDAOImpl implements OrdersDAO{
     @Override
     public List<MostUsedToppingDTO> getMostUsedToppings() {
         TypedQuery<MostUsedToppingDTO> mostUsedToppingsQuery = entityManager
-                .createQuery("SELECT t.id, t.name, count(o.toppingId) as mostUsedToppingId FROM Topping t LEFT JOIN OrderItems o ON (t.id = o.toppingId) GROUP BY t.id, t.name ORDER BY mostUsedToppingId DESC", MostUsedToppingDTO.class);
+                .createQuery("SELECT t.id, t.name, count(o.toppingId) as mostUsedToppingId FROM" +
+                        " Topping t LEFT JOIN OrderItems o ON (t.id = o.toppingId)" +
+                        " GROUP BY t.id, t.name ORDER BY mostUsedToppingId DESC", MostUsedToppingDTO.class);
 
         List<MostUsedToppingDTO> resultList = mostUsedToppingsQuery.getResultList();
 
