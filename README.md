@@ -2,9 +2,22 @@
 Coffee Store Backend API
 
 Spring Boot version: v3.3.1
+***
+
+API is configured for H2 in memory database (for demonstration purposes)
+
+# H2 Console settings:
+
+Driver Class: org.h2.Driver
+
+JDBC URL: jdbc:h2:mem:coffestoredb
+
+******************************************************************
+
+Server port is 8080 by default
 
 # Coffee Store Backend API endpoint list and example Requestbodies
-****************************************************************
+******************************************************************
 
 /POST localhost:8080/order/createorder
 --------------------------------------
@@ -36,7 +49,7 @@ Spring Boot version: v3.3.1
 }
 ]
 }
-
+***
 
 /POST localhost:8080/admin/createdrink
 --------------------------------------
@@ -44,16 +57,16 @@ Spring Boot version: v3.3.1
 "name": "Black Coffee",
 "price": 4
 }
-
+***
 
 /GET localhost:8080/admin/getAllDrinks
 --------------------------------------
-
+***
 
 /DELETE localhost:8080/admin/deletedrink/{drinkId}
 --------------------------------------------------
 /DELETE localhost:8080/admin/deletedrink/{2}
-
+***
 
 /PUT localhost:8080/admin/updateDrink/{drinId}
 ----------------------------------------------
@@ -62,7 +75,7 @@ Spring Boot version: v3.3.1
 "name": "LatteNew",
 "price": 20
 }
-
+***
 
 /POST localhost:8080/admin/createtopping
 ----------------------------------------
@@ -70,16 +83,16 @@ Spring Boot version: v3.3.1
 "name": "Hazelnut syrup",
 "price": 3
 }
-
+***
 
 /GET localhost:8080/admin/getAllToppings
 ----------------------------------------
-
+***
 
 /DELETE localhost:8080/admin/deletetopping/{toppingId}
 ------------------------------------------------------
 /DELETE localhost:8080/admin/deletetopping/2
-
+***
 
 /PUT localhost:8080/admin/updateTopping/{toppingId}
 -----------------------------------------
@@ -88,7 +101,7 @@ Spring Boot version: v3.3.1
 "name": "Hazelnut syrupNEW",
 "price": 20
 }
-
+***
 
 /GET localhost:8080/admin/mostUsedToppings
 ------------------------------------------
