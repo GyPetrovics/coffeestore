@@ -1,6 +1,5 @@
 package com.bestseller.coffeestore.dao;
 
-import com.bestseller.coffeestore.entity.Users;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;

@@ -1,6 +1,5 @@
 package com.bestseller.coffeestore.dao;
 
-import com.bestseller.coffeestore.dto.DrinkDTO;
 import com.bestseller.coffeestore.dto.ToppingDTO;
 import com.bestseller.coffeestore.entity.Topping;
 
