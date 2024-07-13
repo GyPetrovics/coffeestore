@@ -15,7 +15,7 @@ import java.util.List;
 public class CartSummary {
     private Long id;
     private String userId;
-    private List<CartOrderItemDTO> cartOrderItemDTOList;
+    private CartOrderItemDTO cartOrderItemDTO;
     private Double originalPrice;
     private Double finalOrderPrice;
 }

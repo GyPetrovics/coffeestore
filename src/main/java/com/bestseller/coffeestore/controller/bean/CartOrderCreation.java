@@ -10,5 +10,5 @@ import java.util.List;
 @Setter
 public class CartOrderCreation {
     private String userId;
-    private List<CartOrderItemDTO> cartOrderItems;
+    private List<CartOrderItemDTO> cartOrderItem;
 }

@@ -16,7 +16,7 @@ public class Cart {
     @Column(name = "user_id")
     private String userId;
     @OneToMany(mappedBy = "cartOrderId", cascade = CascadeType.ALL)
-    private List<CartOrderItems> cartOrderItemList;
+    private List<CartOrderItems> cartOrderItem;
 
     public Long getId() {
         return id;
@@ -26,16 +26,16 @@ public class Cart {
         return userId;
     }
 
-    public List<CartOrderItems> getCartOrderItemList() {
-        return cartOrderItemList;
+    public List<CartOrderItems> getCartOrderItem() {
+        return cartOrderItem;
     }
 
     public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public void setCartOrderItemList(List<CartOrderItems> cartOrderItemList) {
-        this.cartOrderItemList = cartOrderItemList;
+    public void setCartOrderItem(List<CartOrderItems> cartOrderItem) {
+        this.cartOrderItem = cartOrderItem;
     }
 
     @Override
