@@ -9,4 +9,5 @@ public class ToppingCreation {
     private Long id;
     private String name;
     private Integer price;
+    private String userId;
 }

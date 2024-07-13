@@ -1,8 +1,6 @@
 package com.bestseller.coffeestore.dao;
 
 import com.bestseller.coffeestore.controller.bean.CartOrderCreation;
-import com.bestseller.coffeestore.dto.CartDTO;
-import com.bestseller.coffeestore.dto.CartOrderItemDTO;
 import com.bestseller.coffeestore.entity.Cart;
 import com.bestseller.coffeestore.entity.CartOrderItems;
 import jakarta.persistence.EntityManager;
@@ -10,7 +8,6 @@ import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -58,5 +55,13 @@ public class CartDAOImpl implements CartDAO{
     @Transactional
     public void clearUserCart(Cart cart) {
         entityManager.remove(cart);
+    }
+
+    @Override
+    public List<CartOrderItems> getAllCartOrderItems() {
+        TypedQuery<CartOrderItems> getAllCartOrderItems = entityManager
+                .createQuery("SELECT coi FROM CartOrderItems coi", CartOrderItems.class);
+        List<CartOrderItems> resultList = getAllCartOrderItems.getResultList();
+        return resultList;
     }
 }

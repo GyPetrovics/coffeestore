@@ -53,24 +53,27 @@ Server port is 8080
 /POST localhost:8080/admin/createdrink
 --------------------------------------
 {
+"userId": "user1"
 "name": "Black Coffee",
 "price": 4
 }
 
 
-/GET localhost:8080/admin/getAllDrinks
+/GET localhost:8080/admin/getAllDrinks/{userId}
 --------------------------------------
+/GET localhost:8080/admin/getAllDrinks/user1
 
 
-/DELETE localhost:8080/admin/deletedrink/{drinkId}
+/DELETE localhost:8080/admin/deletedrink/{drinkId}/{userId}
 --------------------------------------------------
-/DELETE localhost:8080/admin/deletedrink/{2}
+/DELETE localhost:8080/admin/deletedrink/2/user1
 
 
 /PUT localhost:8080/admin/updateDrink/{drinId}
 ----------------------------------------------
 /PUT localhost:8080/admin/updateDrink/3
 {
+"userId": "user1"
 "name": "LatteNew",
 "price": 20
 }
@@ -79,30 +82,34 @@ Server port is 8080
 /POST localhost:8080/admin/createtopping
 ----------------------------------------
 {
+"userId": "user1"
 "name": "Hazelnut syrup",
 "price": 3
 }
 
 
-/GET localhost:8080/admin/getAllToppings
-----------------------------------------
+/GET localhost:8080/admin/getAllToppings/{userId}
+-------------------------------------------------
+/GET localhost:8080/admin/getAllToppings/user1
 
 
-/DELETE localhost:8080/admin/deletetopping/{toppingId}
+/DELETE localhost:8080/admin/deletetopping/{toppingId}/{userId}
 ------------------------------------------------------
-/DELETE localhost:8080/admin/deletetopping/2
+/DELETE localhost:8080/admin/deletetopping/2/user1
 
 
 /PUT localhost:8080/admin/updateTopping/{toppingId}
 -----------------------------------------
 /PUT localhost:8080/admin/updateTopping/5
 {
+"userId": "user1"
 "name": "Hazelnut syrupNEW",
 "price": 20
 }
 
 
-/GET localhost:8080/admin/mostUsedToppings
-------------------------------------------
+/GET localhost:8080/admin/mostUsedToppings/{userId}
+---------------------------------------------------
+/GET localhost:8080/admin/mostUsedToppings/user1
 
 ****************************************************************

@@ -65,7 +65,7 @@ public class CartServiceImpl implements CartService {
         Cart cartByUserId = cartDAO.findByUserId(cartOrderCreation.getUserId());
         int transactionId = 1;
         if (cartByUserId.getUserId() == null) {
-            Map<String, Double> origAndFinalOrderPrice = calculateCartTotalPrice(orderCreation);
+
             Cart cart = new Cart();
             cart.setUserId(cartOrderCreation.getUserId());
 
@@ -80,6 +80,11 @@ public class CartServiceImpl implements CartService {
 
             cart.setCartOrderItem(cartOrderItems);
             cartDAO.save(cart);
+
+            orderCreation.getOrderItems().stream()
+                    .forEach(orderItem -> orderItem.setTransactionId(cart.getCartOrderItems().get(0).getTransactionId()));
+
+            Map<String, Double> origAndFinalOrderPrice = calculateCartTotalPrice(orderCreation);
 
 //      Creating response body ---------------------------------------------------
 
@@ -111,23 +116,29 @@ public class CartServiceImpl implements CartService {
             return cartSummary;
         } else {
             // if there is already a cart with the incoming userId, then just save the orderItems to the same cart id
-            Map<String, Double> origAndFinalOrderPrice = calculateCartTotalPrice(orderCreation);
+//            Map<String, Double> origAndFinalOrderPrice = calculateCartTotalPrice(orderCreation);
             // Transforming cartOrderCreation into orderCreation to get the total prices for the response,
             // using -> orderService.calculateOrderTotalPrice(orderCreation)
-            OrderCreation plusOrderCreation = new OrderCreation();
             orderCreation.setUserId(cartOrderCreation.getUserId());
-            List<CartOrderItemDTO> incomingPlusCartOrderItems = cartOrderCreation.getCartOrderItem();
 
-            List<OrderItemDTO> plusOrderItemDTOList = incomingCartOrderItems.stream().map(incomingCartOrderItem -> {
+            // retrieveing all existing CartOrderItems for calculation purposes
+            List<CartOrderItems> allCartOrderItems = cartDAO.getAllCartOrderItems();
+            List<OrderItemDTO> allCartOrderItemsList = allCartOrderItems.stream().map(orderItem -> {
                 OrderItemDTO orderItemDTO = new OrderItemDTO();
-                orderItemDTO.setToppingDTOList(incomingCartOrderItem.getToppingDTOList());
-                orderItemDTO.setDrinkDTO(incomingCartOrderItem.getDrinkDTO());
+                orderItemDTO.setTransactionId(orderItem.getTransactionId());
+                DrinkDTO drinkDTO = new DrinkDTO();
+                drinkDTO.setDrinkId(orderItem.getDrinkId());
+                orderItemDTO.setDrinkDTO(drinkDTO);
+                List<ToppingDTO> toppingDTO_List = List.of(new ToppingDTO(orderItem.getToppingId()));
+                orderItemDTO.setToppingDTOList(toppingDTO_List);
                 return orderItemDTO;
             }).collect(Collectors.toList());
 
-            orderCreation.setOrderItems(orderItemDTOList);
+            for (OrderItemDTO orderItemDTO : allCartOrderItemsList) {
+                orderCreation.getOrderItems().add(orderItemDTO);
+            }
+            orderCreation.setOrderItems(allCartOrderItemsList);
 
-            Map<String, Double> newOrigAndFinalOrderPrice = calculateCartTotalPrice(orderCreation);
 
 
             String userId = cartOrderCreation.getUserId();
@@ -154,25 +165,35 @@ public class CartServiceImpl implements CartService {
                 cartOrderItemDAO.save(actCartOrderItem);
             }
 
+            int maxOfTransId = cart.getCartOrderItems().stream().mapToInt(CartOrderItems::getTransactionId).max().orElse(0);
+            orderCreation.getOrderItems().stream()
+                    .forEach(orderItem -> orderItem.setTransactionId(maxOfTransId + 1));
+
+
+//            // retrieveing all existing CartOrderItems for calculation purposes
+//            List<CartOrderItems> allCartOrderItems = cartDAO.getAllCartOrderItems();
+//            List<OrderItemDTO> allCartOrderItemsList = allCartOrderItems.stream().map(orderItem -> {
+//                OrderItemDTO orderItemDTO = new OrderItemDTO();
+//                orderItemDTO.setTransactionId(orderItem.getTransactionId());
+//                DrinkDTO drinkDTO = new DrinkDTO();
+//                drinkDTO.setDrinkId(orderItem.getDrinkId());
+//                orderItemDTO.setDrinkDTO(drinkDTO);
+//                List<ToppingDTO> toppingDTO_List = List.of(new ToppingDTO(orderItem.getToppingId()));
+//                orderItemDTO.setToppingDTOList(toppingDTO_List);
+//                return orderItemDTO;
+//            }).collect(Collectors.toList());
+//
+//            orderCreation.setOrderItems(allCartOrderItemsList);
+
+
+            Map<String, Double> origAndFinalOrderPrice = calculateCartTotalPrice(orderCreation);
+
+
             // Create and return response body ---------------------------------------------------
 
             CartSummary cartSummary = new CartSummary();
             cartSummary.setId(cart.getId());
             cartSummary.setUserId(cart.getUserId());
-
-            List<CartOrderItems> cartOrderItemsList = cart.getCartOrderItems();
-
-            List<CartOrderItemDTO> cartOrderItemDTOList = cartOrderItemsList.stream()
-                    .map(cartOrderItem -> {
-                        DrinkDTO drinkDTO = new DrinkDTO();
-                        drinkDTO.setDrinkId(cartOrderItem.getDrinkId());
-                        List<ToppingDTO> toppingDTO_List = List.of(new ToppingDTO(cartOrderItem.getToppingId()));
-                        CartOrderItemDTO cartOrderItemDTO = new CartOrderItemDTO();
-                        cartOrderItemDTO.setDrinkDTO(drinkDTO);
-                        cartOrderItemDTO.setToppingDTOList(toppingDTO_List);
-                        return cartOrderItemDTO;
-                    })
-                    .collect(Collectors.toList());
 
             originalSumPrice = originalSumPrice + origAndFinalOrderPrice.get("OrigPrice");
             finalSumPrice = finalSumPrice + origAndFinalOrderPrice.get("FinalPrice");
@@ -186,10 +207,12 @@ public class CartServiceImpl implements CartService {
     }
 
     public Map<String, Double> calculateCartTotalPrice(OrderCreation orderCreation) {
-        // Maps for counting the drinks and toppings by their iDs
+
+        // Map of Drinks
         Map<Long, Long> drinksMap = orderCreation.getOrderItems().stream()
                 .collect(Collectors.groupingBy(drink -> drink.getDrinkDTO().getDrinkId(), Collectors.counting()));
 
+        // Map for collecting the topping by their id
         Map<Long, Long> toppingsMap = orderCreation.getOrderItems().stream()
                 .flatMap(topping -> topping.getToppingDTOList().stream())
                 .collect(Collectors.groupingBy(
@@ -203,9 +226,6 @@ public class CartServiceImpl implements CartService {
         // Retrieving the names and prices for the ordered drinks and toppings
         List<DrinkDTO> orderedDrinks = drinksDAO.getOrderedDrinks(drinkIdSet);
         List<ToppingDTO> orderedToppings = toppingsDAO.getOrderedToppings(toppingIdSet);
-
-        // Counting the number of the drinks for discount calculation
-        Long numberOfDrinks = drinksMap.entrySet().stream().map(nrOfDrinks -> nrOfDrinks.getValue()).reduce(Long::sum).orElse(0L);
 
         // Assigning the prices of the ordered drinks
         orderCreation.getOrderItems().forEach(orderItem -> {
@@ -232,44 +252,52 @@ public class CartServiceImpl implements CartService {
             });
         });
 
+        Map<Integer, List<OrderItemDTO>> drinks = orderCreation.getOrderItems().stream().collect(Collectors.groupingBy(OrderItemDTO::getTransactionId));
+        drinks.entrySet().stream().mapToInt(drink -> drink.getValue().stream().mapToInt(order -> {
+            int drinkPrice = order.getDrinkDTO().getPrice();
+            int toppingPrice = order.getToppingDTOList().stream().mapToInt(topping -> topping.getPrice()).sum();
+            int totalPrice = drinkPrice + toppingPrice;
+            return totalPrice;
+        }).sum());
 
-        // Calculationg order full price
-        int fullPrice = orderCreation.getOrderItems().stream()
-                .mapToInt(orderItem -> {
-                    int drinkPrice = orderItem.getDrinkDTO().getPrice();
-                    int toppingsPrice = orderItem.getToppingDTOList().stream()
-                            .mapToInt(topping -> topping.getPrice())
-                            .sum();
-                    int totalPrice = drinkPrice + toppingsPrice;
-                    return totalPrice;
-                })
-                .sum();
-
-        // Collecting prices by Order items for discount calculation
-        Map<Integer, Integer> pricesByOrderitem = IntStream.range(0, orderCreation.getOrderItems().size())
-                .boxed()
-                .collect(Collectors.toMap(
-                        i -> i,
-                        actualOrderPrice -> {
-                            OrderItemDTO orderItem = orderCreation.getOrderItems().get(actualOrderPrice);
-                            int drinkPrice = orderItem.getDrinkDTO().getPrice();
-                            int toppingsPrice = orderItem.getToppingDTOList().stream()
-                                    .mapToInt(ToppingDTO::getPrice)
-                                    .sum();
-                            return drinkPrice + toppingsPrice;
-                        }
+        // Calculation prices by each transaction
+        Map<Integer, Integer> transactionPrices = orderCreation.getOrderItems().stream()
+                .collect(Collectors.groupingBy(
+                        OrderItemDTO::getTransactionId,
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                items -> {
+                                    Set<Long> uniqueDrinkIds = new HashSet<>();
+                                    Set<Long> uniqueToppingIds = new HashSet<>();
+                                    return items.stream().mapToInt(item -> {
+                                        int drinkPrice = 0;
+                                        if (uniqueDrinkIds.add(item.getDrinkDTO().getDrinkId())) {
+                                            drinkPrice = item.getDrinkDTO().getPrice();
+                                        }
+                                        int toppingPrice = item.getToppingDTOList().stream()
+                                                .filter(topping -> uniqueToppingIds.add(topping.getToppingId()))
+                                                .mapToInt(ToppingDTO::getPrice)
+                                                .sum();
+                                        return drinkPrice + toppingPrice;
+                                    }).sum();
+                                }
+                        )
                 ));
+
+        int fullPrice = transactionPrices.values().stream().mapToInt(Integer::intValue).sum();
+
+        int maxOfTransactionId = orderCreation.getOrderItems().stream().mapToInt(OrderItemDTO::getTransactionId).max().orElse(0);
 
         // Calculation final price considering promotions
         double finalPrice = 0.0;
-        if (fullPrice > 12 && pricesByOrderitem.size() >= 3) {
-            Map.Entry<Integer, Integer> integerIntegerEntry = pricesByOrderitem.entrySet().stream().min(Map.Entry.comparingByValue()).orElse(null);
+        if (fullPrice > 12 && transactionPrices.size() >= 3) {
+            Map.Entry<Integer, Integer> integerIntegerEntry = transactionPrices.entrySet().stream().min(Map.Entry.comparingByValue()).orElse(null);
             Integer value = integerIntegerEntry.getValue();
             finalPrice = fullPrice - value;
         } else if (fullPrice > 12) {
             finalPrice = fullPrice * 0.75;
-        } else if (pricesByOrderitem.size() >= 3) {
-            Map.Entry<Integer, Integer> integerIntegerEntry = pricesByOrderitem.entrySet().stream().min(Map.Entry.comparingByValue()).orElse(null);
+        } else if (transactionPrices.size() >= 3) {
+            Map.Entry<Integer, Integer> integerIntegerEntry = transactionPrices.entrySet().stream().min(Map.Entry.comparingByValue()).orElse(null);
             Integer value = integerIntegerEntry.getValue();
             finalPrice = fullPrice - value;
         } else {
