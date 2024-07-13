@@ -14,4 +14,5 @@ import java.util.List;
 public class OrderItemDTO {
     private DrinkDTO drinkDTO;
     private List<ToppingDTO> toppingDTOList;
+    private Integer transactionId;
 }

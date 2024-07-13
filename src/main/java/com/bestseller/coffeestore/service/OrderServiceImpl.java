@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -49,6 +50,8 @@ public class OrderServiceImpl implements OrderService{
         Orders order = new Orders();
         order.setUser_Id(orderCreation.getUserId());
 
+        AtomicInteger index = new AtomicInteger(0);
+
         List<OrderItems> orderItems = orderCreation.getOrderItems().stream()
                 .flatMap(orderItemDTO -> {
                     Long drinkId = orderItemDTO.getDrinkDTO().getDrinkId();
@@ -56,6 +59,10 @@ public class OrderServiceImpl implements OrderService{
                             .map(toppingDTO -> new OrderItems(drinkId, toppingDTO.getToppingId()));
                 })
                 .peek(orderItem -> orderItem.setOrderId(order))
+                .peek(orderItem -> {
+                    int i = index.getAndIncrement();
+                    orderItem.setTransactionId(orderCreation.getOrderItems().get(i).getTransactionId());
+                })
                 .collect(Collectors.toList());
 
         order.setOrderItemList(orderItems);
@@ -98,7 +105,7 @@ public class OrderServiceImpl implements OrderService{
         List<ToppingDTO> orderedToppings = toppingsDAO.getOrderedToppings(toppingIdSet);
 
         // Counting the number of the drinks for discount calculation
-        Long numberOfDrinks = drinksMap.entrySet().stream().map(nrOfDrinks -> nrOfDrinks.getValue()).reduce(Long::sum).orElse(0L);
+//        Long numberOfDrinks = drinksMap.entrySet().stream().map(nrOfDrinks -> nrOfDrinks.getValue()).reduce(Long::sum).orElse(0L);
 
         // Assigning the prices of the ordered drinks
         orderCreation.getOrderItems().forEach(orderItem -> {
@@ -188,7 +195,6 @@ public class OrderServiceImpl implements OrderService{
         if (cartByUserId.getUserId() != null && cartByUserId.getUserId().equals(finalizeOrders.getUserId()) && finalizeOrders.getOrderFinalized()) {
             OrderCreation orderCreation = new OrderCreation();
             orderCreation.setUserId(finalizeOrders.getUserId());
-//            List<OrderItemDTO> orderItemDTOList = new ArrayList<>();
             List<CartOrderItems> cartOrderItems = cartByUserId.getCartOrderItems();
 
             List<OrderItemDTO> orderItems = cartOrderItems.stream()
@@ -199,6 +205,7 @@ public class OrderServiceImpl implements OrderService{
                         OrderItemDTO orderItemDTO = new OrderItemDTO();
                         orderItemDTO.setDrinkDTO(drinkDTO);
                         orderItemDTO.setToppingDTOList(toppingDTOList);
+                        orderItemDTO.setTransactionId(cartOrderItem.getTransactionId());
                         return orderItemDTO;
                     })
                     .collect(Collectors.toList());

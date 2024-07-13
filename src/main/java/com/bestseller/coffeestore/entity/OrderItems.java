@@ -19,6 +19,8 @@ public class OrderItems {
     private Long drinkId;
     @Column(name = "topping_id")
     private Long toppingId;
+    @Column(name = "transaction_id")
+    private Integer transactionId;
 
     public OrderItems(Long drinkId, Long toppingId) {
         this.drinkId = drinkId;
@@ -51,6 +53,14 @@ public class OrderItems {
 
     public Long getToppingId() {
         return toppingId;
+    }
+
+    public Integer getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(Integer transactionId) {
+        this.transactionId = transactionId;
     }
 
     @Override

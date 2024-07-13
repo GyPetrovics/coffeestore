@@ -1,6 +1,5 @@
 package com.bestseller.coffeestore.model;
 
-import com.bestseller.coffeestore.dto.CartOrderItemDTO;
 import com.bestseller.coffeestore.dto.OrderItemDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -18,10 +18,20 @@ public class CartOrderItems {
     private Long drinkId;
     @Column(name = "topping_id")
     private Long toppingId;
+    @Column(name = "transaction_id")
+    private Integer transactionId;
 
     public CartOrderItems(Long drinkId, Long toppingId) {
         this.drinkId = drinkId;
         this.toppingId = toppingId;
+    }
+
+    public Integer getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(Integer transactionId) {
+        this.transactionId = transactionId;
     }
 
     public void setCartOrderId(Cart cartOrderId) {

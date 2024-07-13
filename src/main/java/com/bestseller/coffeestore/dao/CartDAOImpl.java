@@ -36,15 +36,6 @@ public class CartDAOImpl implements CartDAO{
 
         Cart retrievedCart = findCartByUserIdQuery.getResultList().stream().findFirst().orElse(new Cart());
 
-//        boolean userIdFound = false;
-//
-//        for (Cart cart : resultList) {
-//            if (cart.getUserId().equals(userId)) {
-//                userIdFound = true;
-//            } else {
-//                userIdFound = false;
-//            }
-//        }
         return retrievedCart;
     }
 
