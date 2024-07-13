@@ -114,7 +114,6 @@ public class CartServiceImpl implements CartService {
             return cartSummary;
         } else {
             // if there is already a cart with the incoming userId, then just save the orderItems to the same cart id
-//            Map<String, Double> origAndFinalOrderPrice = calculateCartTotalPrice(orderCreation);
             // Transforming cartOrderCreation into orderCreation to get the total prices for the response,
             // using -> orderService.calculateOrderTotalPrice(orderCreation)
             orderCreation.setUserId(cartOrderCreation.getUserId());
@@ -137,12 +136,8 @@ public class CartServiceImpl implements CartService {
             }
             orderCreation.setOrderItems(allCartOrderItemsList);
 
-
-
             String userId = cartOrderCreation.getUserId();
             Cart cart = cartDAO.findByUserId(userId);
-
-
 
             Long drinkId = cartOrderCreation.getCartOrderItem().get(0).getDrinkDTO().getDrinkId();
             List<ToppingDTO> toppingDTOList = cartOrderCreation.getCartOrderItem().get(0).getToppingDTOList();
@@ -177,10 +172,8 @@ public class CartServiceImpl implements CartService {
             cartSummary.setUserId(cart.getUserId());
 
             originalSumPrice = originalSumPrice + origAndFinalOrderPrice.get("OrigPrice");
-//            finalSumPrice = finalSumPrice + origAndFinalOrderPrice.get("FinalPrice");
             cartSummary.setOrderItemDTOList(orderCreation.getOrderItems());
             cartSummary.setOriginalPrice(originalSumPrice);
-//            cartSummary.setFinalOrderPrice(finalSumPrice);
 
             log.info("A new item has been added to the cart");
             return cartSummary;
@@ -267,8 +260,6 @@ public class CartServiceImpl implements CartService {
 
         int fullPrice = transactionPrices.values().stream().mapToInt(Integer::intValue).sum();
 
-        int maxOfTransactionId = orderCreation.getOrderItems().stream().mapToInt(OrderItemDTO::getTransactionId).max().orElse(0);
-
         // Calculation final price considering promotions
         double finalPrice = 0.0;
         if (fullPrice > 12 && transactionPrices.size() >= 3) {
@@ -288,7 +279,7 @@ public class CartServiceImpl implements CartService {
         // returning original full price and discounted price
         Map<String, Double> origAndFinalPriceMap = new HashMap<>();
         origAndFinalPriceMap.put("OrigPrice", Double.valueOf(fullPrice));
-//        origAndFinalPriceMap.put("FinalPrice", finalPrice);
+
 
         log.info("Final order price has been calculated... ");
         return origAndFinalPriceMap;
