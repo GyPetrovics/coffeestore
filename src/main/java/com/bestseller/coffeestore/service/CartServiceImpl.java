@@ -106,9 +106,9 @@ public class CartServiceImpl implements CartService {
 
             cartSummary.setOrderItemDTOList(orderCreation.getOrderItems());
             originalSumPrice = origAndFinalOrderPrice.get("OrigPrice");
-            finalSumPrice = origAndFinalOrderPrice.get("FinalPrice");
+//            finalSumPrice = origAndFinalOrderPrice.get("FinalPrice");
             cartSummary.setOriginalPrice(originalSumPrice);
-            cartSummary.setFinalOrderPrice(finalSumPrice);
+//            cartSummary.setFinalOrderPrice(finalSumPrice);
 
             log.info("A cart has been created and a new item has been added to the cart");
             return cartSummary;
@@ -167,23 +167,6 @@ public class CartServiceImpl implements CartService {
             orderCreation.getOrderItems().stream()
                     .forEach(orderItem -> orderItem.setTransactionId(maxOfTransId + 1));
 
-
-//            // retrieveing all existing CartOrderItems for calculation purposes
-//            List<CartOrderItems> allCartOrderItems = cartDAO.getAllCartOrderItems();
-//            List<OrderItemDTO> allCartOrderItemsList = allCartOrderItems.stream().map(orderItem -> {
-//                OrderItemDTO orderItemDTO = new OrderItemDTO();
-//                orderItemDTO.setTransactionId(orderItem.getTransactionId());
-//                DrinkDTO drinkDTO = new DrinkDTO();
-//                drinkDTO.setDrinkId(orderItem.getDrinkId());
-//                orderItemDTO.setDrinkDTO(drinkDTO);
-//                List<ToppingDTO> toppingDTO_List = List.of(new ToppingDTO(orderItem.getToppingId()));
-//                orderItemDTO.setToppingDTOList(toppingDTO_List);
-//                return orderItemDTO;
-//            }).collect(Collectors.toList());
-//
-//            orderCreation.setOrderItems(allCartOrderItemsList);
-
-
             Map<String, Double> origAndFinalOrderPrice = calculateCartTotalPrice(orderCreation);
 
 
@@ -194,10 +177,10 @@ public class CartServiceImpl implements CartService {
             cartSummary.setUserId(cart.getUserId());
 
             originalSumPrice = originalSumPrice + origAndFinalOrderPrice.get("OrigPrice");
-            finalSumPrice = finalSumPrice + origAndFinalOrderPrice.get("FinalPrice");
+//            finalSumPrice = finalSumPrice + origAndFinalOrderPrice.get("FinalPrice");
             cartSummary.setOrderItemDTOList(orderCreation.getOrderItems());
             cartSummary.setOriginalPrice(originalSumPrice);
-            cartSummary.setFinalOrderPrice(finalSumPrice);
+//            cartSummary.setFinalOrderPrice(finalSumPrice);
 
             log.info("A new item has been added to the cart");
             return cartSummary;
@@ -305,7 +288,7 @@ public class CartServiceImpl implements CartService {
         // returning original full price and discounted price
         Map<String, Double> origAndFinalPriceMap = new HashMap<>();
         origAndFinalPriceMap.put("OrigPrice", Double.valueOf(fullPrice));
-        origAndFinalPriceMap.put("FinalPrice", finalPrice);
+//        origAndFinalPriceMap.put("FinalPrice", finalPrice);
 
         log.info("Final order price has been calculated... ");
         return origAndFinalPriceMap;
