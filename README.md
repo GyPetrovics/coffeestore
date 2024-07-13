@@ -19,50 +19,36 @@ Server port is 8080
 # Coffee Store Backend API endpoint list and example Requestbodies
 ******************************************************************
 
-/POST localhost:8080/order/createorder
---------------------------------------
+/POST localhost:8080/cart/addCartItem
+-------------------------------------
+
 {
 "userId": "user1",
-"orderItems": [
+"cartOrderItem": [
 {
 "drinkDTO": {
 "drinkId": 3
 },
 "toppingDTOList": [
 {
-"toppingId": 1
-},
-{
 "toppingId": 3
-}
-]
-},
-{
-"drinkDTO": {
-"drinkId": 1
-},
-"toppingDTOList": [
-{
-"toppingId": 1
 },
 {
 "toppingId": 2
 }
 ]
-},
-{
-"drinkDTO": {
-"drinkId": 4
-},
-"toppingDTOList": [
-{
-"toppingId": 4
 }
 ]
 }
-]
+
+/POST localhost:8080/order/finalizeOrder
+----------------------------------------
+
+{
+"userId": "user1",
+"orderFinalized": true
 }
-***
+
 
 /POST localhost:8080/admin/createdrink
 --------------------------------------
@@ -70,26 +56,25 @@ Server port is 8080
 "name": "Black Coffee",
 "price": 4
 }
-***
+
 
 /GET localhost:8080/admin/getAllDrinks
 --------------------------------------
-***
+
 
 /DELETE localhost:8080/admin/deletedrink/{drinkId}
 --------------------------------------------------
-/DELETE localhost:8080/admin/deletedrink/2
-***
+/DELETE localhost:8080/admin/deletedrink/{2}
+
 
 /PUT localhost:8080/admin/updateDrink/{drinId}
 ----------------------------------------------
 /PUT localhost:8080/admin/updateDrink/3
-
 {
 "name": "LatteNew",
 "price": 20
 }
-***
+
 
 /POST localhost:8080/admin/createtopping
 ----------------------------------------
@@ -97,16 +82,16 @@ Server port is 8080
 "name": "Hazelnut syrup",
 "price": 3
 }
-***
+
 
 /GET localhost:8080/admin/getAllToppings
 ----------------------------------------
-***
+
 
 /DELETE localhost:8080/admin/deletetopping/{toppingId}
 ------------------------------------------------------
 /DELETE localhost:8080/admin/deletetopping/2
-***
+
 
 /PUT localhost:8080/admin/updateTopping/{toppingId}
 -----------------------------------------
@@ -115,7 +100,7 @@ Server port is 8080
 "name": "Hazelnut syrupNEW",
 "price": 20
 }
-***
+
 
 /GET localhost:8080/admin/mostUsedToppings
 ------------------------------------------

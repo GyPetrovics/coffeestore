@@ -22,25 +22,14 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping(path = "/createorder", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OrderSummary> createOrder(
-            @RequestBody OrderCreation orderCreation
-    ) {
-        if (orderCreation == null) {
-            // throw Exception (a custom exception could be created here...)
-        }
-        Cart cart = new Cart();
-        return ResponseEntity.ok(orderService.createOrder(orderCreation, cart));
-    }
-
     @PostMapping(path = "/finalizeOrder", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OrderSummary> finalizeOrder(
-            @RequestBody FinalizeOrder finalizeOrders
+            @RequestBody FinalizeOrder finalizeOrder
     ) {
-        if (finalizeOrders == null) {
+        if (finalizeOrder == null) {
             // throw Exception (a custom exception could be created here...)
         }
-        return ResponseEntity.ok(orderService.finalizeOrders(finalizeOrders));
+        return ResponseEntity.ok(orderService.finalizeOrder(finalizeOrder));
     }
 
 }

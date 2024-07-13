@@ -8,8 +8,6 @@ import com.bestseller.coffeestore.mock.MockToppingsDAO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class AdminServiceImplTest {
 
     private final AdminServiceImpl testedAdminService = new AdminServiceImpl(

@@ -179,7 +179,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public OrderSummary finalizeOrders(FinalizeOrder finalizeOrders) {
+    public OrderSummary finalizeOrder(FinalizeOrder finalizeOrders) {
         // get the cart and the cartorderitems from DB, create an OrderCreation object from them, and reuse the createOrder
         Cart cartByUserId = cartDAO.findByUserId(finalizeOrders.getUserId());
         if (cartByUserId.getUserId() != null && cartByUserId.getUserId().equals(finalizeOrders.getUserId()) && finalizeOrders.getOrderFinalized()) {

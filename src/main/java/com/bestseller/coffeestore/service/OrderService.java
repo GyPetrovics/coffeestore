@@ -9,5 +9,5 @@ import lombok.NonNull;
 public interface OrderService {
 
     OrderSummary createOrder(@NonNull OrderCreation orderCreation, Cart cart);
-    OrderSummary finalizeOrders(FinalizeOrder finalizeOrders);
+    OrderSummary finalizeOrder(FinalizeOrder finalizeOrders);
 }
