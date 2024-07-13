@@ -8,6 +8,7 @@ import com.bestseller.coffeestore.entity.CartOrderItems;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +64,7 @@ public class CartDAOImpl implements CartDAO{
     }
 
     @Override
+    @Transactional
     public void clearUserCart(Cart cart) {
         entityManager.remove(cart);
     }
