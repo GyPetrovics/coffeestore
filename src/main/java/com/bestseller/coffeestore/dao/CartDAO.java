@@ -7,4 +7,5 @@ public interface CartDAO {
     void save(Cart cart);
     Cart findByUserId(String userId);
     Boolean cartContainsOrderItem(String userId, CartOrderCreation cartOrderCreation);
+    void clearUserCart(Cart cart);
 }

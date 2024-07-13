@@ -61,4 +61,9 @@ public class CartDAOImpl implements CartDAO{
 
         return null;
     }
+
+    @Override
+    public void clearUserCart(Cart cart) {
+        entityManager.remove(cart);
+    }
 }

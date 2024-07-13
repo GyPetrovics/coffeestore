@@ -5,19 +5,19 @@ import com.bestseller.coffeestore.dao.CartDAO;
 import com.bestseller.coffeestore.dao.CartOrderItemDAO;
 import com.bestseller.coffeestore.dao.DrinksDAO;
 import com.bestseller.coffeestore.dao.ToppingsDAO;
+import com.bestseller.coffeestore.dto.DrinkDTO;
+import com.bestseller.coffeestore.dto.OrderItemDTO;
 import com.bestseller.coffeestore.dto.ToppingDTO;
 import com.bestseller.coffeestore.entity.Cart;
 import com.bestseller.coffeestore.entity.CartOrderItems;
-import com.bestseller.coffeestore.entity.OrderItems;
 import com.bestseller.coffeestore.model.CartSummary;
-import com.bestseller.coffeestore.model.OrderSummary;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -42,7 +42,7 @@ public class CartServiceImpl implements CartService {
 
         // if there is no cart with the incoming userId, then save cart with its items
         Cart cartByUserId = cartDAO.findByUserId(cartOrderCreation.getUserId());
-        if (cartByUserId == null || cartByUserId.getUserId().isEmpty() || cartByUserId.getUserId().isBlank()) {
+        if (cartByUserId.getUserId() == null) {
             Cart cart = new Cart();
             cart.setUserId(cartOrderCreation.getUserId());
 
@@ -53,15 +53,6 @@ public class CartServiceImpl implements CartService {
                     .map(toppingDTO -> new CartOrderItems(drinkId, toppingDTO.getToppingId()))
                     .peek(cartOrderItem -> cartOrderItem.setCartOrderId(cart))
                     .collect(Collectors.toList());
-
-//            List<CartOrderItems> cartOrderItems = cartOrderCreation.getCartOrderItems().stream()
-//                    .flatMap(cartOrderItemDTO -> {
-//                        Long drinkId = cartOrderItemDTO.getDrinkDTO().getDrinkId();
-//                        return cartOrderItemDTO.getToppingDTOList().stream()
-//                                .map(toppingDTO -> new CartOrderItems(drinkId, toppingDTO.getToppingId()));
-//                    })
-//                    .peek(cartOrderItem -> cartOrderItem.setCartOrderId(cart))
-//                    .collect(Collectors.toList());
 
             cart.setCartOrderItem(cartOrderItems);
             cartDAO.save(cart);
@@ -81,6 +72,26 @@ public class CartServiceImpl implements CartService {
             // if there is already a cart with the incoming userId, then just save the orderItems to the same cart id
             String userId = cartOrderCreation.getUserId();
             Cart cart = cartDAO.findByUserId(userId);
+
+            // ***********************
+//            List<CartOrderItems> cartOrderItemsx = cartByUserId.getCartOrderItems();
+//            List<OrderItemDTO> orderItems = cartOrderItemsx.stream()
+//                    .map(cartOrderItem -> {
+//                        DrinkDTO drinkDTO = new DrinkDTO();
+//                        drinkDTO.setDrinkId(cartOrderItem.getDrinkId());
+//
+//                        List<ToppingDTO> toppingDTOList = List.of(new ToppingDTO(cartOrderItem.getToppingId()));
+//                        OrderItemDTO orderItemDTO = new OrderItemDTO();
+//                        orderItemDTO.setDrinkDTO(drinkDTO);
+//                        orderItemDTO.setToppingDTOList(toppingDTOList);
+//                        return orderItemDTO;
+//                    })
+//                    .collect(Collectors.toList());
+
+            // ***********************
+
+
+
             Long drinkId = cartOrderCreation.getCartOrderItem().get(0).getDrinkDTO().getDrinkId();
             List<ToppingDTO> toppingDTOList = cartOrderCreation.getCartOrderItem().get(0).getToppingDTOList();
             List<CartOrderItems> cartOrderItems = toppingDTOList
@@ -92,6 +103,10 @@ public class CartServiceImpl implements CartService {
             for (CartOrderItems actCartOrderItem : cartOrderItems) {
                 cartOrderItemDAO.save(actCartOrderItem);
             }
+
+            // Create and return response body ---------------------------------------------------
+
+
         }
 
         // a parameter and/or endpoint is needed to trigger the finalization of the order

@@ -5,6 +5,7 @@ import com.bestseller.coffeestore.entity.Orders;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class OrdersDAOImpl implements OrdersDAO{
     }
 
     @Override
+    @Transactional
     public void save(Orders orders) {
         entityManager.persist(orders);
     }

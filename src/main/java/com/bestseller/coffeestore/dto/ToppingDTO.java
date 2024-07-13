@@ -13,4 +13,8 @@ public class ToppingDTO {
     private Long toppingId;
     private String toppingName;
     private Integer price;
+
+    public ToppingDTO(Long toppingId) {
+        this.toppingId = toppingId;
+    }
 }

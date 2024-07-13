@@ -1,12 +1,16 @@
 package com.bestseller.coffeestore.service;
 
+import com.bestseller.coffeestore.controller.bean.FinalizeOrder;
 import com.bestseller.coffeestore.controller.bean.OrderCreation;
+import com.bestseller.coffeestore.dao.CartDAO;
 import com.bestseller.coffeestore.dao.DrinksDAO;
 import com.bestseller.coffeestore.dao.OrdersDAO;
 import com.bestseller.coffeestore.dao.ToppingsDAO;
 import com.bestseller.coffeestore.dto.DrinkDTO;
 import com.bestseller.coffeestore.dto.OrderItemDTO;
 import com.bestseller.coffeestore.dto.ToppingDTO;
+import com.bestseller.coffeestore.entity.Cart;
+import com.bestseller.coffeestore.entity.CartOrderItems;
 import com.bestseller.coffeestore.entity.OrderItems;
 import com.bestseller.coffeestore.entity.Orders;
 import com.bestseller.coffeestore.model.OrderSummary;
@@ -26,16 +30,18 @@ public class OrderServiceImpl implements OrderService{
     OrdersDAO ordersDAO;
     DrinksDAO drinksDAO;
     ToppingsDAO toppingsDAO;
+    CartDAO cartDAO;
 
-    public OrderServiceImpl(OrdersDAO ordersDAO, DrinksDAO drinksDAO, ToppingsDAO toppingsDAO) {
+    public OrderServiceImpl(OrdersDAO ordersDAO, DrinksDAO drinksDAO, ToppingsDAO toppingsDAO, CartDAO cartDAO) {
         this.ordersDAO = ordersDAO;
         this.drinksDAO = drinksDAO;
         this.toppingsDAO = toppingsDAO;
+        this.cartDAO = cartDAO;
     }
 
     @Override
     @Transactional
-    public OrderSummary createOrder(@NonNull OrderCreation orderCreation) {
+    public OrderSummary createOrder(@NonNull OrderCreation orderCreation, Cart cart) {
 
         Map<String, Double> origAndFinalOrderPrice = calculateOrderTotalPrice(orderCreation);
 
@@ -54,6 +60,11 @@ public class OrderServiceImpl implements OrderService{
 
         order.setOrderItemList(orderItems);
         ordersDAO.save(order);
+
+        // Clear cart
+        cartDAO.clearUserCart(cart);
+        log.info("Cart for the user has been cleared...");
+
 
 //      Creating response body ---------------------------------------------------
         OrderSummary orderSummary = new OrderSummary();
@@ -165,5 +176,37 @@ public class OrderServiceImpl implements OrderService{
 
         log.info("Final order price has been calculated... ");
         return origAndFinalPriceMap;
+    }
+
+    @Override
+    public OrderSummary finalizeOrders(FinalizeOrder finalizeOrders) {
+        // get the cart and the cartorderitems from DB, create an OrderCreation object from them, and reuse the createOrder
+        Cart cartByUserId = cartDAO.findByUserId(finalizeOrders.getUserId());
+        if (cartByUserId.getUserId() != null && cartByUserId.getUserId().equals(finalizeOrders.getUserId()) && finalizeOrders.getOrderFinalized()) {
+            OrderCreation orderCreation = new OrderCreation();
+            orderCreation.setUserId(finalizeOrders.getUserId());
+
+            List<OrderItemDTO> orderItemDTOList = new ArrayList<>();
+
+            List<CartOrderItems> cartOrderItems = cartByUserId.getCartOrderItems();
+
+            List<OrderItemDTO> orderItems = cartOrderItems.stream()
+                    .map(cartOrderItem -> {
+                        DrinkDTO drinkDTO = new DrinkDTO();
+                        drinkDTO.setDrinkId(cartOrderItem.getDrinkId());
+                        List<ToppingDTO> toppingDTOList = List.of(new ToppingDTO(cartOrderItem.getToppingId()));
+                        OrderItemDTO orderItemDTO = new OrderItemDTO();
+                        orderItemDTO.setDrinkDTO(drinkDTO);
+                        orderItemDTO.setToppingDTOList(toppingDTOList);
+                        return orderItemDTO;
+                    })
+                    .collect(Collectors.toList());
+
+            orderCreation.setOrderItems(orderItems);
+
+            createOrder(orderCreation, cartByUserId);
+
+        }
+        return null;
     }
 }

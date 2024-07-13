@@ -1,6 +1,8 @@
 package com.bestseller.coffeestore.controller;
 
+import com.bestseller.coffeestore.controller.bean.FinalizeOrder;
 import com.bestseller.coffeestore.controller.bean.OrderCreation;
+import com.bestseller.coffeestore.entity.Cart;
 import com.bestseller.coffeestore.model.OrderSummary;
 import com.bestseller.coffeestore.service.OrderService;
 import org.springframework.http.MediaType;
@@ -27,7 +29,18 @@ public class OrderController {
         if (orderCreation == null) {
             // throw Exception (a custom exception could be created here...)
         }
-        return ResponseEntity.ok(orderService.createOrder(orderCreation));
+        Cart cart = new Cart();
+        return ResponseEntity.ok(orderService.createOrder(orderCreation, cart));
+    }
+
+    @PostMapping(path = "/finalizeOrder", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<OrderSummary> finalizeOrder(
+            @RequestBody FinalizeOrder finalizeOrders
+    ) {
+        if (finalizeOrders == null) {
+            // throw Exception (a custom exception could be created here...)
+        }
+        return ResponseEntity.ok(orderService.finalizeOrders(finalizeOrders));
     }
 
 }

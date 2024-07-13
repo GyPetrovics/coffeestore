@@ -4,6 +4,8 @@ import com.bestseller.coffeestore.controller.bean.OrderCreation;
 import com.bestseller.coffeestore.dto.DrinkDTO;
 import com.bestseller.coffeestore.dto.OrderItemDTO;
 import com.bestseller.coffeestore.dto.ToppingDTO;
+import com.bestseller.coffeestore.entity.Cart;
+import com.bestseller.coffeestore.mock.MockCartDAO;
 import com.bestseller.coffeestore.mock.MockDrinksDAO;
 import com.bestseller.coffeestore.mock.MockOrdersDAO;
 import com.bestseller.coffeestore.mock.MockToppingsDAO;
@@ -21,7 +23,8 @@ class OrderServiceImplTest {
     private final OrderServiceImpl testedOrderServiceImpl = new OrderServiceImpl(
             new MockOrdersDAO(),
             new MockDrinksDAO(),
-            new MockToppingsDAO()
+            new MockToppingsDAO(),
+            new MockCartDAO()
     );
 
     @Test
@@ -50,6 +53,8 @@ class OrderServiceImplTest {
         orderCreation.setUserId("user1");
         orderCreation.setOrderItems(orderItemDTOList);
 
-        Assertions.assertNotNull(testedOrderServiceImpl.createOrder(orderCreation));
+        Cart cart = new Cart();
+
+        Assertions.assertNotNull(testedOrderServiceImpl.createOrder(orderCreation, cart));
     }
 }
