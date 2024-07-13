@@ -1,8 +1,6 @@
 package com.bestseller.coffeestore.controller;
 
 import com.bestseller.coffeestore.controller.bean.FinalizeOrder;
-import com.bestseller.coffeestore.controller.bean.OrderCreation;
-import com.bestseller.coffeestore.entity.Cart;
 import com.bestseller.coffeestore.model.OrderSummary;
 import com.bestseller.coffeestore.service.OrderService;
 import org.springframework.http.MediaType;
