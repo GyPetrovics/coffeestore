@@ -1,6 +1,7 @@
 package com.bestseller.coffeestore.model;
 
 import com.bestseller.coffeestore.dto.CartOrderItemDTO;
+import com.bestseller.coffeestore.dto.OrderItemDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import java.util.List;
 public class CartSummary {
     private Long id;
     private String userId;
-    private CartOrderItemDTO cartOrderItemDTO;
+    private List<OrderItemDTO> orderItemDTOList;
     private Double originalPrice;
     private Double finalOrderPrice;
 }

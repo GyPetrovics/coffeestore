@@ -180,14 +180,15 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public OrderSummary finalizeOrder(@NonNull FinalizeOrder finalizeOrders) {
+
+        OrderSummary orderSummary = new OrderSummary();
+
         // get the cart and the cartorderitems from DB, create an OrderCreation object from them, and reuse the createOrder
         Cart cartByUserId = cartDAO.findByUserId(finalizeOrders.getUserId());
         if (cartByUserId.getUserId() != null && cartByUserId.getUserId().equals(finalizeOrders.getUserId()) && finalizeOrders.getOrderFinalized()) {
             OrderCreation orderCreation = new OrderCreation();
             orderCreation.setUserId(finalizeOrders.getUserId());
-
-            List<OrderItemDTO> orderItemDTOList = new ArrayList<>();
-
+//            List<OrderItemDTO> orderItemDTOList = new ArrayList<>();
             List<CartOrderItems> cartOrderItems = cartByUserId.getCartOrderItems();
 
             List<OrderItemDTO> orderItems = cartOrderItems.stream()
@@ -203,10 +204,9 @@ public class OrderServiceImpl implements OrderService{
                     .collect(Collectors.toList());
 
             orderCreation.setOrderItems(orderItems);
-
-            createOrder(orderCreation, cartByUserId);
+            orderSummary = createOrder(orderCreation, cartByUserId);
 
         }
-        return null;
+        return orderSummary;
     }
 }
