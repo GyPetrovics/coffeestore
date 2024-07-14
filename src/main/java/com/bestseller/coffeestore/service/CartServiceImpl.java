@@ -79,8 +79,9 @@ public class CartServiceImpl implements CartService {
             cart.setCartOrderItem(cartOrderItems);
             cartDAO.save(cart);
 
+            int maxOfTransId = cart.getCartOrderItems().stream().mapToInt(CartOrderItems::getTransactionId).max().orElse(0);
             orderCreation.getOrderItems().stream()
-                    .forEach(orderItem -> orderItem.setTransactionId(cart.getCartOrderItems().get(0).getTransactionId()));
+                    .forEach(orderItem -> orderItem.setTransactionId(maxOfTransId + 1));
 
             Map<String, Double> origAndFinalOrderPrice = calculateCartTotalPrice(orderCreation);
 
@@ -90,25 +91,32 @@ public class CartServiceImpl implements CartService {
             cartSummary.setId(cart.getId());
             cartSummary.setUserId(cart.getUserId());
 
-            List<CartOrderItems> cartOrderItemsList = cart.getCartOrderItems();
+            Map<Integer, List<OrderItemDTO>> groupedOrderItems = orderCreation.getOrderItems().stream()
+                    .collect(Collectors.groupingBy(OrderItemDTO::getTransactionId));
 
-            List<CartOrderItemDTO> cartOrderItemDTOList = cartOrderItemsList.stream()
-                    .map(cartOrderItem -> {
-                        DrinkDTO drinkDTO = new DrinkDTO();
-                        drinkDTO.setDrinkId(cartOrderItem.getDrinkId());
-                        List<ToppingDTO> toppingDTO_List = List.of(new ToppingDTO(cartOrderItem.getToppingId()));
-                        CartOrderItemDTO cartOrderItemDTO = new CartOrderItemDTO();
-                        cartOrderItemDTO.setDrinkDTO(drinkDTO);
-                        cartOrderItemDTO.setToppingDTOList(toppingDTO_List);
-                        return cartOrderItemDTO;
+            List<OrderItemDTO> orderItemList = groupedOrderItems.entrySet().stream()
+                    .map(entry -> {
+                        OrderItemDTO mergedOrderItem = new OrderItemDTO();
+
+                        List<OrderItemDTO> items = entry.getValue();
+                        if (!items.isEmpty()) {
+                            mergedOrderItem.setDrinkDTO(items.get(0).getDrinkDTO());
+                            mergedOrderItem.setTransactionId(entry.getKey());
+
+                            List<ToppingDTO> mergedToppings = items.stream()
+                                    .flatMap(orderItem -> orderItem.getToppingDTOList().stream())
+                                    .collect(Collectors.toList());
+
+                            mergedOrderItem.setToppingDTOList(mergedToppings);
+                        }
+
+                        return mergedOrderItem;
                     })
                     .collect(Collectors.toList());
 
-            cartSummary.setOrderItemDTOList(orderCreation.getOrderItems());
+            cartSummary.setOrderItemDTOList(orderItemList);
             originalSumPrice = origAndFinalOrderPrice.get("OrigPrice");
-//            finalSumPrice = origAndFinalOrderPrice.get("FinalPrice");
             cartSummary.setOriginalPrice(originalSumPrice);
-//            cartSummary.setFinalOrderPrice(finalSumPrice);
 
             log.info("A cart has been created and a new item has been added to the cart");
             return cartSummary;
@@ -172,9 +180,8 @@ public class CartServiceImpl implements CartService {
             cartSummary.setUserId(cart.getUserId());
 
             originalSumPrice = originalSumPrice + origAndFinalOrderPrice.get("OrigPrice");
-            cartSummary.setOrderItemDTOList(orderCreation.getOrderItems());
             cartSummary.setOriginalPrice(originalSumPrice);
-
+            cartSummary.setOrderItemDTOList(orderCreation.getOrderItems());
             log.info("A new item has been added to the cart");
             return cartSummary;
         }
