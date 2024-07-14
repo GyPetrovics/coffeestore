@@ -76,7 +76,32 @@ public class OrderServiceImpl implements OrderService{
         OrderSummary orderSummary = new OrderSummary();
         orderSummary.setId(order.getId());
         orderSummary.setUserId(order.getUserId());
-        orderSummary.setOrderItemList(orderCreation.getOrderItems());
+
+        Map<Integer, List<OrderItemDTO>> groupedOrderItems = orderCreation.getOrderItems().stream()
+                .collect(Collectors.groupingBy(OrderItemDTO::getTransactionId));
+
+        List<OrderItemDTO> orderItemList = groupedOrderItems.entrySet().stream()
+                .map(entry -> {
+                    OrderItemDTO mergedOrderItem = new OrderItemDTO();
+
+                    List<OrderItemDTO> items = entry.getValue();
+                    if (!items.isEmpty()) {
+                        mergedOrderItem.setDrinkDTO(items.get(0).getDrinkDTO());
+                        mergedOrderItem.setTransactionId(entry.getKey());
+
+                        List<ToppingDTO> mergedToppings = items.stream()
+                                .flatMap(orderItem -> orderItem.getToppingDTOList().stream())
+                                .collect(Collectors.toList());
+
+                        mergedOrderItem.setToppingDTOList(mergedToppings);
+                    }
+
+                    return mergedOrderItem;
+                })
+                .collect(Collectors.toList());
+
+        orderSummary.setOrderItemList(orderItemList);
+
         orderSummary.setOriginalPrice(origAndFinalOrderPrice.get("OrigPrice"));
         orderSummary.setFinalOrderPrice(origAndFinalOrderPrice.get("FinalPrice"));
 
