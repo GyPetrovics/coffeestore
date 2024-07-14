@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -49,20 +48,17 @@ public class OrderServiceImpl implements OrderService{
         Orders order = new Orders();
         order.setUser_Id(orderCreation.getUserId());
 
-        AtomicInteger index = new AtomicInteger(0);
-
-        List<OrderItems> orderItems = orderCreation.getOrderItems().stream()
-                .flatMap(orderItemDTO -> {
-                    Long drinkId = orderItemDTO.getDrinkDTO().getDrinkId();
-                    return orderItemDTO.getToppingDTOList().stream()
-                            .map(toppingDTO -> new OrderItems(drinkId, toppingDTO.getToppingId()));
-                })
-                .peek(orderItem -> orderItem.setOrderId(order))
-                .peek(orderItem -> {
-                    int i = index.getAndIncrement();
-                    orderItem.setTransactionId(orderCreation.getOrderItems().get(i).getTransactionId());
-                })
-                .collect(Collectors.toList());
+        List<OrderItems> orderItems = new ArrayList<>();
+        for (OrderItemDTO orderItemDTO : orderCreation.getOrderItems()) {
+            Long drinkId = orderItemDTO.getDrinkDTO().getDrinkId();
+            int transactionId = orderItemDTO.getTransactionId();
+            for (ToppingDTO toppingDTO : orderItemDTO.getToppingDTOList()) {
+                OrderItems orderItem = new OrderItems(drinkId, toppingDTO.getToppingId());
+                orderItem.setOrderId(order);
+                orderItem.setTransactionId(transactionId);
+                orderItems.add(orderItem);
+            }
+        }
 
         order.setOrderItemList(orderItems);
         ordersDAO.save(order);

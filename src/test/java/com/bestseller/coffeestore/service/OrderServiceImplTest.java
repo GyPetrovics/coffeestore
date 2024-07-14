@@ -44,8 +44,8 @@ class OrderServiceImplTest {
         toppingDTOList.add(toppingDTO3);
         toppingDTOList.add(toppingDTO4);
 
-        OrderItemDTO orderItemDTO1 = new OrderItemDTO(drinkDTO, toppingDTOList);
-        OrderItemDTO orderItemDTO2 = new OrderItemDTO(drinkDTO2, toppingDTOList2);
+        OrderItemDTO orderItemDTO1 = new OrderItemDTO(drinkDTO, toppingDTOList,1);
+        OrderItemDTO orderItemDTO2 = new OrderItemDTO(drinkDTO2, toppingDTOList2,1);
 
         List<OrderItemDTO> orderItemDTOList = new ArrayList<>();
         orderItemDTOList.add(orderItemDTO1);
