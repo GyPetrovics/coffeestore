@@ -106,9 +106,10 @@ public class OrderServiceImpl implements OrderService{
     }
 
     private Map<String, Double> calculateOrderTotalPrice(OrderCreation orderCreation) {
-        // Map for counting the drinks by transactionId
-        Map<Integer, Long> drinksMap = orderCreation.getOrderItems().stream()
-                .collect(Collectors.groupingBy(drink -> drink.getTransactionId(), Collectors.counting()));
+
+        // Map for counting the drinks by drinkId
+        Map<Long, Long> drinksMap_byDrinkId = orderCreation.getOrderItems().stream()
+                .collect(Collectors.groupingBy(drink -> drink.getDrinkDTO().getDrinkId(), Collectors.counting()));
 
         // Map for collecting the topping by their id
         Map<Long, Long> toppingsMap = orderCreation.getOrderItems().stream()
@@ -118,7 +119,7 @@ public class OrderServiceImpl implements OrderService{
                 ));
 
         // Collecting drinkIds and toppingIds for queries which retrieve the names and prices for the ordered drinks and toppings
-        Set<Integer> drinkIdSet = drinksMap.entrySet().stream().map(drinkId -> drinkId.getKey()).collect(Collectors.toSet());
+        Set<Long> drinkIdSet = drinksMap_byDrinkId.entrySet().stream().map(drinkId -> drinkId.getKey()).collect(Collectors.toSet());
         Set<Long> toppingIdSet = toppingsMap.entrySet().stream().map(toppingId -> toppingId.getKey()).collect(Collectors.toSet());
 
         // Retrieving the names and prices for the ordered drinks and toppings
